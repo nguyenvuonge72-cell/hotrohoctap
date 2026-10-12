@@ -1,0 +1,519 @@
+<!DOCTYPE html> 
+
+<html lang="vi"> 
+
+<head> 
+
+<meta charset="utf-8"> 
+
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"> 
+
+<title>SmartTutor – Trợ giảng số thông minh</title> 
+
+<link rel="preconnect" href="https://fonts.googleapis.com"> 
+
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&display=swap" rel="stylesheet"> 
+
+<style> 
+
+:root{--bg:#f6f4ee;--card:#fff;--ink:#14263a;--mute:#5d6b7a;--line:#d9d6cb;--brand:#0e6b5c;--brand-ink:#fff;--hi:#ffe26a;--ok:#14803c;--bad:#b42318;--okbg:#e4f5ea;--badbg:#fde8e6; 
+
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} 
+
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a24;--card:#17252f;--ink:#e8eef3;--mute:#9fb0be;--line:#2c3e4b;--brand:#3fc1a8;--brand-ink:#06201b;--hi:#c9a800;--ok:#6ee09a;--bad:#ff9a8f;--okbg:#12361f;--badbg:#3d1b18}} 
+
+:root[data-theme="dark"]{--bg:#0f1a24;--card:#17252f;--ink:#e8eef3;--mute:#9fb0be;--line:#2c3e4b;--brand:#3fc1a8;--brand-ink:#06201b;--hi:#c9a800;--ok:#6ee09a;--bad:#ff9a8f;--okbg:#12361f;--badbg:#3d1b18} 
+
+html{scroll-padding-top:env(safe-area-inset-top,0px)} 
+
+*{box-sizing:border-box} 
+
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 "Be Vietnam Pro",system-ui,sans-serif} 
+
+button,input,select,textarea{font:inherit;color:inherit} 
+
+button{cursor:pointer} 
+
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px} 
+
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px clamp(14px,4vw,40px);border-bottom:2px solid var(--ink);background:var(--card)} 
+
+.logo{font-weight:800;font-size:1.35rem;cursor:pointer;background:linear-gradient(transparent 62%,var(--hi) 62%);padding:0 4px} 
+
+nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap} 
+
+.btn{border:1.5px solid var(--ink);background:var(--card);border-radius:8px;padding:7px 14px;font-weight:500} 
+
+.btn.main{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:700} 
+
+.btn:disabled{opacity:.5;cursor:not-allowed} 
+
+.chip{font-size:.85rem;padding:3px 10px;border-radius:99px;border:1.5px solid var(--line);background:var(--card)} 
+
+.chip.warn{border-color:var(--bad);color:var(--bad)} 
+
+main{max-width:980px;margin:0 auto;padding:20px clamp(14px,4vw,24px) 60px} 
+
+.tabs{display:flex;gap:6px;margin-bottom:16px} 
+
+.tab{border:0;background:none;padding:8px 14px;font-weight:700;border-bottom:3px solid transparent;color:var(--mute)} 
+
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--brand)} 
+
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px} 
+
+.bar input[type=search]{flex:1 1 220px} 
+
+input,select,textarea{background:var(--card);border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;width:100%} 
+
+.bar select{width:auto} 
+
+details.filter{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:16px} 
+
+summary{font-weight:700;cursor:pointer} 
+
+.group{margin-top:10px}.group b{display:block;font-size:.9rem;color:var(--mute);margin-bottom:4px} 
+
+.tag{display:inline-block;margin:0 6px 6px 0;padding:4px 12px;border-radius:99px;border:1.5px solid var(--line);background:var(--bg);font-size:.9rem} 
+
+.tag[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)} 
+
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px} 
+
+.card h3{margin:2px 0 6px;font-size:1.05rem} 
+
+.meta{color:var(--mute);font-size:.9rem} 
+
+.row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap} 
+
+.opt{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;margin:8px 0;cursor:pointer;background:var(--card)} 
+
+.opt input{width:auto;margin-top:5px} 
+
+.opt.sel{border-color:var(--brand)} 
+
+.opt.right{background:var(--okbg);border-color:var(--ok)} 
+
+.opt.wrong{background:var(--badbg);border-color:var(--bad)} 
+
+.why{display:block;margin-top:4px;font-size:.9rem;color:var(--mute)} 
+
+.note{background:var(--okbg);border-left:5px solid var(--ok);padding:10px 14px;border-radius:6px;margin-top:12px} 
+
+.lock{background:var(--badbg);border-left:5px solid var(--bad);padding:10px 14px;border-radius:6px;margin-bottom:12px} 
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px} 
+
+label.f{display:block;font-weight:500;font-size:.9rem;margin:8px 0 3px} 
+
+pre{white-space:pre-wrap;background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:14px;font:inherit;overflow-x:auto} 
+
+.overlay{position:fixed;inset:0;background:rgba(10,20,30,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:9} 
+
+.overlay.on{display:flex} 
+
+.modal{background:var(--card);border-radius:12px;padding:20px;width:min(400px,100%);border:2px solid var(--ink)} 
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;display:none;z-index:10} 
+
+button.opt{width:100%;text-align:left}.pg{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin:6px 0 16px}.pg i{display:block;height:100%;background:var(--brand)}.rev{border-left:4px solid var(--bad);padding-left:10px;margin:10px 0} 
+
+footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px} 
+
+</style> 
+
+</head> 
+
+<body> 
+
+<header> 
+
+  <span class="logo" id="home" tabindex="0" role="link">🎓 SmartTutor</span> 
+
+  <nav id="nav"></nav> 
+
+</header> 
+
+<main id="app"></main> 
+
+<footer>SmartTutor – Giải thích để hiểu bài, không chỉ đưa đáp án. Bản demo giao diện.</footer> 
+
+ 
+
+<div class="overlay" id="authBox" role="dialog" aria-modal="true" aria-labelledby="authTitle"> 
+
+  <div class="modal"> 
+
+    <h2 id="authTitle" style="margin:0 0 8px"></h2> 
+
+    <label class="f" for="em">Email</label><input id="em" type="email" autocomplete="email"> 
+
+    <label class="f" for="pw">Mật khẩu (từ 6 ký tự)</label><input id="pw" type="password" autocomplete="current-password"> 
+
+    <div id="roleBox"><label class="f" for="role">Bạn là</label> 
+
+      <select id="role"><option>Học sinh</option><option>Giáo viên / Trung tâm</option></select></div> 
+
+    <p id="authErr" class="meta" style="color:var(--bad);min-height:1.4em;margin:8px 0"></p> 
+
+    <div class="row"><button class="btn main" id="authGo"></button><button class="btn" id="authX">Đóng</button></div> 
+
+  </div> 
+
+</div> 
+
+<div class="toast" id="toast" role="status"></div> 
+
+ 
+
+<script> 
+
+const D={ 
+
+"Toán":[ 
+
+[10,"Tập xác định của hàm số y = √(x − 3) là:",["(3; +∞)","[3; +∞)","(−∞; 3]","ℝ"],1,"Căn bậc hai có nghĩa khi x − 3 ≥ 0, tức x ≥ 3."], 
+
+[10,"Hoành độ đỉnh của parabol y = x² − 4x + 3 là:",["x = 2","x = −2","x = 4","x = 1"],0,"Đỉnh có x = −b/(2a) = 4/2 = 2."], 
+
+[10,"Giá trị của sin 30° bằng:",["√3/2","1/2","√2/2","1"],1,"Giá trị đặc biệt: sin 30° = 1/2."], 
+
+[10,"Cho a = (1; 2), b = (3; −1). Tích vô hướng a·b bằng:",["1","5","−1","0"],0,"a·b = 1·3 + 2·(−1) = 1."], 
+
+[11,"Cấp số cộng có u₁ = 2, công sai d = 3. Số hạng u₅ bằng:",["14","17","11","15"],0,"u₅ = u₁ + 4d = 2 + 12 = 14."], 
+
+[11,"Số cách chọn 2 học sinh từ 5 học sinh là:",["10","20","5","25"],0,"Chọn không phân biệt thứ tự: C(5,2) = 10."], 
+
+[11,"Đạo hàm của hàm số y = sin x là:",["cos x","−cos x","−sin x","tan x"],0,"(sin x)' = cos x."], 
+
+[11,"Tung đồng xu cân đối 2 lần. Xác suất cả hai lần đều sấp là:",["1/2","1/4","1/3","3/4"],1,"Có 4 kết quả đồng khả năng, 1 kết quả thuận lợi nên P = 1/4."], 
+
+[11,"Giới hạn lim (x → 2) (x² − 4)/(x − 2) bằng:",["0","2","4","+∞"],2,"Rút gọn (x − 2)(x + 2)/(x − 2) = x + 2, thay x = 2 được 4."], 
+
+[12,"Nguyên hàm của hàm số f(x) = 2x là:",["x² + C","2x² + C","x + C","2 + C"],0,"∫2x dx = x² + C."], 
+
+[12,"Hàm số y = x³ − 3x đồng biến trên khoảng:",["(−1; 1)","(1; +∞)","(−∞; 0)","(0; +∞)"],1,"y' = 3x² − 3 > 0 khi |x| > 1, nên đồng biến trên (1; +∞)."], 
+
+[12,"Giá trị của log₂ 8 bằng:",["2","3","4","8"],1,"2³ = 8 nên log₂ 8 = 3."], 
+
+[12,"Tích phân ∫ từ 0 đến 1 của 2x dx bằng:",["0","1","2","1/2"],1,"[x²] từ 0 đến 1 = 1 − 0 = 1."], 
+
+[12,"Số phức z = 3 + 4i có môđun |z| bằng:",["5","7","25","√7"],0,"|z| = √(3² + 4²) = 5."], 
+
+[12,"Thể tích khối chóp có diện tích đáy B và chiều cao h là:",["Bh","Bh/3","Bh/2","3Bh"],1,"V = (1/3)·B·h."] 
+
+], 
+
+"Tiếng Anh":[ 
+
+[10,"She ___ coffee every morning.",["drink","drinks","drinking","drank"],1,"Thói quen ở hiện tại, chủ ngữ she nên động từ thêm -s."], 
+
+[10,"I ___ TV when he called me.",["watched","was watching","watch","am watching"],1,"Hành động đang diễn ra thì bị cắt ngang: quá khứ tiếp diễn."], 
+
+[10,"If it rains, we ___ at home.",["stay","will stay","stayed","would stay"],1,"Câu điều kiện loại 1: If + hiện tại đơn, will + động từ."], 
+
+[10,"He is ___ than his brother.",["tall","taller","tallest","more tall"],1,"Tính từ ngắn so sánh hơn thêm -er."], 
+
+[10,"___ you ever been to Da Nang?",["Did","Have","Do","Are"],1,"Trải nghiệm từ trước đến nay dùng hiện tại hoàn thành: Have you ever been..."], 
+
+[11,"The book ___ by a famous writer.",["wrote","was written","is writing","has wrote"],1,"Câu bị động quá khứ: was/were + V3."], 
+
+[11,"Từ đồng nghĩa với \"big\" là:",["tiny","huge","narrow","weak"],1,"huge nghĩa là rất lớn; tiny là rất nhỏ."], 
+
+[11,"Từ trái nghĩa với \"ancient\" là:",["old","modern","historic","antique"],1,"ancient là cổ xưa, trái nghĩa là modern (hiện đại)."], 
+
+[11,"She asked me where ___.",["do I live","I lived","I live","did I live"],1,"Câu tường thuật: lùi thì và giữ trật tự khẳng định: where I lived."], 
+
+[11,"I look forward to ___ you.",["see","seeing","saw","seen"],1,"look forward to + V-ing (to là giới từ)."], 
+
+[12,"He suggested ___ to the cinema.",["go","going","to go","went"],1,"suggest + V-ing."], 
+
+[12,"Neither Tom nor his friends ___ here.",["is","are","was","has"],1,"Neither...nor: động từ chia theo chủ ngữ gần nhất là friends (số nhiều)."], 
+
+[12,"Thành ngữ \"Break a leg!\" có nghĩa là:",["Chúc may mắn","Hãy cẩn thận","Chạy đi","Tôi bị đau"],0,"Đây là lời chúc may mắn, thường dùng trước buổi biểu diễn."], 
+
+[12,"___ the heavy rain, we went out.",["Although","Despite","Because","However"],1,"Despite + cụm danh từ (the heavy rain); Although cần một mệnh đề."], 
+
+[12,"She works hard ___ she can pass the exam.",["so that","because of","although","but"],0,"so that + mệnh đề chỉ mục đích."] 
+
+], 
+
+"Vật lý":[ 
+
+[10,"Đơn vị của lực trong hệ SI là:",["Jun (J)","Niutơn (N)","Oát (W)","Pascal (Pa)"],1,"Lực đo bằng niutơn (N); J là năng lượng, W là công suất, Pa là áp suất."], 
+
+[10,"Xe chuyển động thẳng đều với vận tốc 15 m/s. Quãng đường đi được sau 20 s là:",["35 m","300 m","0,75 m","150 m"],1,"s = v·t = 15·20 = 300 m."], 
+
+[10,"Vật khối lượng 2 kg chịu lực 6 N. Gia tốc của vật là:",["3 m/s²","12 m/s²","0,33 m/s²","8 m/s²"],0,"Định luật II Newton: a = F/m = 6/2 = 3 m/s²."], 
+
+[10,"Trọng lực tác dụng lên vật 5 kg (g = 10 m/s²) là:",["0,5 N","5 N","50 N","500 N"],2,"P = mg = 5·10 = 50 N."], 
+
+[10,"Động năng của vật 2 kg chuyển động với vận tốc 3 m/s là:",["6 J","9 J","18 J","3 J"],1,"Wđ = ½mv² = ½·2·9 = 9 J."], 
+
+[11,"Định luật Ôm cho đoạn mạch chỉ có điện trở R là:",["I = U·R","I = U/R","I = R/U","U = I/R"],1,"Cường độ dòng điện tỉ lệ thuận với hiệu điện thế và tỉ lệ nghịch với điện trở: I = U/R."], 
+
+[11,"Hai điện trở 3 Ω và 6 Ω mắc song song có điện trở tương đương là:",["9 Ω","2 Ω","4,5 Ω","18 Ω"],1,"1/R = 1/3 + 1/6 = 1/2 nên R = 2 Ω."], 
+
+[11,"Công suất điện của đoạn mạch có U = 12 V, I = 2 A là:",["6 W","24 W","14 W","0,17 W"],1,"P = UI = 12·2 = 24 W."], 
+
+[11,"Lực từ tác dụng lên dây dẫn mang dòng điện trong từ trường đều lớn nhất khi dây dẫn:",["song song với đường sức từ","vuông góc với đường sức từ","hợp với đường sức góc 30°","không có dòng điện"],1,"F = BIl·sinα, lớn nhất khi α = 90°."], 
+
+[11,"Khúc xạ ánh sáng là hiện tượng:",["tia sáng bị hắt trở lại môi trường cũ","tia sáng đổi hướng khi đi qua mặt phân cách hai môi trường","tia sáng bị hấp thụ hoàn toàn","tia sáng luôn truyền thẳng"],1,"Khúc xạ là sự đổi hướng của tia sáng khi truyền xiên góc qua mặt phân cách hai môi trường trong suốt."], 
+
+[12,"Dao động điều hòa có tần số f = 5 Hz thì chu kì là:",["0,2 s","5 s","2 s","0,5 s"],0,"T = 1/f = 1/5 = 0,2 s."], 
+
+[12,"Sóng cơ không truyền được trong môi trường nào?",["Chất rắn","Chất lỏng","Chất khí","Chân không"],3,"Sóng cơ cần môi trường vật chất đàn hồi để truyền, không truyền được trong chân không."], 
+
+[12,"Trong mạch điện xoay chiều chỉ có điện trở thuần, điện áp và dòng điện:",["lệch pha π/2","cùng pha","ngược pha","lệch pha π/4"],1,"Với điện trở thuần, u và i cùng pha."], 
+
+[12,"Năng lượng của một photon ánh sáng có tần số f là:",["ε = hf","ε = h/f","ε = f/h","ε = hf²"],0,"Công thức Plăng–Anh-xtanh: ε = hf."], 
+
+[12,"Hạt nhân heli có A = 4, Z = 2 thì số proton và số nơtron lần lượt là:",["2 và 2","4 và 2","2 và 4","1 và 3"],0,"Số proton bằng Z = 2, số nơtron N = A − Z = 2."] 
+
+], 
+
+"Hóa học":[ 
+
+[10,"Nguyên tử có số hiệu Z = 11 có số electron là:",["11","12","10","23"],0,"Nguyên tử trung hòa: số electron = số proton = Z = 11."], 
+
+[10,"Nguyên tố nào sau đây là kim loại kiềm?",["Mg","Na","Al","Ca"],1,"Na thuộc nhóm IA (kim loại kiềm); Mg, Ca thuộc nhóm IIA; Al thuộc nhóm IIIA."], 
+
+[10,"Liên kết trong phân tử NaCl là liên kết:",["cộng hóa trị","ion","kim loại","hiđro"],1,"Na nhường electron cho Cl tạo ion Na⁺ và Cl⁻, liên kết bằng lực hút tĩnh điện."], 
+
+[10,"Số mol của 4,48 lít khí CO₂ (đktc) là:",["0,1 mol","0,2 mol","0,4 mol","2 mol"],1,"n = V/22,4 = 4,48/22,4 = 0,2 mol."], 
+
+[10,"Số oxi hóa của lưu huỳnh trong H₂SO₄ là:",["+4","+6","−2","+2"],1,"2·(+1) + x + 4·(−2) = 0, suy ra x = +6."], 
+
+[11,"Dung dịch nào sau đây dẫn điện tốt nhất (cùng nồng độ)?",["Glucozơ","Ancol etylic","NaCl","Saccarozơ"],2,"NaCl là chất điện li mạnh, phân li hoàn toàn thành ion; các chất còn lại không điện li."], 
+
+[11,"Dung dịch có pH = 12 có môi trường:",["axit","bazơ","trung tính","lưỡng tính"],1,"pH > 7 là môi trường bazơ."], 
+
+[11,"Khí nào sau đây là khí gây hiệu ứng nhà kính chủ yếu?",["N₂","O₂","CO₂","Ar"],2,"CO₂ giữ nhiệt trong khí quyển nên là khí nhà kính chủ yếu."], 
+
+[11,"Công thức phân tử của etilen là:",["CH₄","C₂H₄","C₂H₂","C₂H₆"],1,"Etilen là anken đơn giản nhất, có công thức C₂H₄."], 
+
+[11,"Chất nào sau đây là ancol etylic?",["CH₃OH","C₂H₅OH","CH₃COOH","HCHO"],1,"C₂H₅OH là ancol etylic; CH₃OH là ancol metylic, CH₃COOH là axit axetic."], 
+
+[12,"Este có công thức CH₃COOC₂H₅ có tên là:",["Metyl axetat","Etyl axetat","Etyl fomat","Metyl fomat"],1,"Gốc axit là axetat (CH₃COO–), gốc ancol là etyl (C₂H₅–): etyl axetat."], 
+
+[12,"Kim loại nào sau đây dẫn điện tốt nhất ở nhiệt độ thường?",["Cu","Ag","Al","Fe"],1,"Ag dẫn điện tốt nhất, sau đó là Cu, Au, Al."], 
+
+[12,"Polime nào sau đây là polime thiên nhiên?",["Polietilen","Xenlulozơ","PVC","Nilon-6,6"],1,"Xenlulozơ có sẵn trong tự nhiên (bông, gỗ); các chất còn lại là polime tổng hợp."], 
+
+[12,"Thủy phân chất béo trong môi trường kiềm gọi là phản ứng:",["este hóa","xà phòng hóa","trùng hợp","hiđro hóa"],1,"Thủy phân chất béo bằng dung dịch kiềm tạo glixerol và muối của axit béo (xà phòng)."], 
+
+[12,"Nước cứng là nước chứa nhiều ion:",["Na⁺ và K⁺","Ca²⁺ và Mg²⁺","Cl⁻ và NO₃⁻","H⁺ và OH⁻"],1,"Nước cứng chứa nhiều ion Ca²⁺ và Mg²⁺."] 
+
+] 
+
+}; 
+
+const Q=[];let _id=0;for(const s in D)D[s].forEach(x=>Q.push({id:++_id,s,g:x[0],q:x[1],o:x[2],a:x[3],t:x[4]})); 
+
+const SUBJ=[...new Set(Q.map(x=>x.s))].sort((a,b)=>a.localeCompare(b,'vi')); 
+
+const LV=["Nhận biết","Thông hiểu","Vận dụng","Vận dụng cao"]; 
+
+const st={tab:"bai",sel:new Set(),sort:"new",kw:"",cur:null,pick:null,res:null,user:null,mode:"login"}; 
+
+const $=s=>document.querySelector(s); 
+
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); 
+
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}}; 
+
+function toast(m){const t=$("#toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",2600)} 
+
+const DAY=864e5; 
+
+function trial(){if(!st.user)return null;const left=st.user.start+7*DAY-Date.now();return{left,on:left>0,d:Math.floor(left/DAY),h:Math.floor(left%DAY/36e5)}} 
+
+async function hash(s){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return btoa(s)}} 
+
+ 
+
+function renderNav(){const t=trial();let h=""; 
+
+ if(st.user){h+=`<span class="chip ${t.on&&t.d<3?'warn':''}">${t.on?`Dùng thử còn ${t.d} ngày ${t.h} giờ`:'Hết hạn dùng thử'}</span><span class="meta">${esc(st.user.email)}</span><button class="btn" id="out">Đăng xuất</button>`} 
+
+ else h+=`<button class="btn" id="li">Đăng nhập</button><button class="btn main" id="rg">Đăng ký</button>`; 
+
+ h+=`<button class="btn" id="th" aria-label="Đổi giao diện sáng tối">🌙</button>`;$("#nav").innerHTML=h; 
+
+ if(st.user)$("#out").onclick=()=>{st.user=null;store.set("st_session",null);render();toast("Đã đăng xuất")}; 
+
+ else{$("#li").onclick=()=>openAuth("login");$("#rg").onclick=()=>openAuth("reg")} 
+
+ $("#th").onclick=()=>{const r=document.documentElement,d=r.dataset.theme==="dark"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme:dark)").matches);r.dataset.theme=d?"light":"dark"}} 
+
+ 
+
+function openAuth(m){st.mode=m;$("#authTitle").textContent=m==="reg"?"Đăng ký – dùng thử 7 ngày":"Đăng nhập";$("#authGo").textContent=m==="reg"?"Tạo tài khoản":"Đăng nhập";$("#roleBox").style.display=m==="reg"?"block":"none";$("#authErr").textContent="";$("#authBox").classList.add("on");$("#em").focus()} 
+
+$("#authX").onclick=()=>$("#authBox").classList.remove("on"); 
+
+$("#authGo").onclick=async()=>{const e=$("#em").value.trim().toLowerCase(),p=$("#pw").value,er=$("#authErr"); 
+
+ if(!/^\S+@\S+\.\S+$/.test(e))return er.textContent="Email chưa đúng định dạng."; 
+
+ if(p.length<6)return er.textContent="Mật khẩu cần ít nhất 6 ký tự."; 
+
+ const users=store.get("st_users")||{},hp=await hash(p); 
+
+ if(st.mode==="reg"){if(users[e])return er.textContent="Email này đã đăng ký. Hãy đăng nhập."; 
+
+  users[e]={hp,role:$("#role").value,start:Date.now()};store.set("st_users",users)} 
+
+ else if(!users[e]||users[e].hp!==hp)return er.textContent="Sai email hoặc mật khẩu."; 
+
+ st.user={email:e,role:users[e].role,start:users[e].start};store.set("st_session",e); 
+
+ $("#authBox").classList.remove("on");toast(st.mode==="reg"?"Đã kích hoạt dùng thử 7 ngày":"Chào mừng bạn quay lại");render()}; 
+
+$("#home").onclick=()=>{st.cur=null;st.tab="bai";render()}; 
+
+ 
+
+function filtered(){let a=Q.filter(x=>(!st.kw||(x.q+x.s).toLowerCase().includes(st.kw))&&[...st.sel].every(t=>t===x.s||t==="Lớp "+x.g||t===x.l)); 
+
+ const f={new:(a,b)=>b.id-a.id,gu:(a,b)=>a.g-b.g,gd:(a,b)=>b.g-a.g,az:(a,b)=>a.s.localeCompare(b.s,'vi'),za:(a,b)=>b.s.localeCompare(a.s,'vi')}[st.sort];return a.sort(f)} 
+
+ 
+
+function viewList(){const tags=[["Lớp",["Lớp 10","Lớp 11","Lớp 12"]],["Môn học",SUBJ]]; 
+
+ const list=filtered(); 
+
+ return `<div class="bar"><select id="so" aria-label="Sắp xếp"><option value="new">Mới nhất</option><option value="gu">Lớp thấp → cao</option><option value="gd">Lớp cao → thấp</option><option value="az">Môn A → Z</option><option value="za">Môn Z → A</option></select> 
+
+ <input type="search" id="kw" placeholder="Tìm câu hỏi hoặc môn học" value="${esc(st.kw)}"></div> 
+
+ <details class="filter" ${st.sel.size?'open':''}><summary>Bộ lọc nâng cao</summary> 
+
+ ${tags.map(([n,ar])=>`<div class="group"><b>${n}</b>${ar.map(t=>`<button class="tag" aria-pressed="${st.sel.has(t)}" data-t="${esc(t)}">${t}</button>`).join("")}</div>`).join("")} 
+
+ <div class="group"><button class="btn" id="clr">Xóa tất cả</button></div></details> 
+
+ <p class="meta">${list.length} câu hỏi</p> 
+
+ ${list.map(x=>`<div class="card"><div class="row"><div><h3>${esc(x.q)}</h3><span class="meta">${x.s} · Lớp ${x.g}</span></div><button class="btn main" data-id="${x.id}">Làm bài</button></div></div>`).join("")||'<div class="card">Không có câu nào khớp. Bỏ bớt bộ lọc để xem thêm.</div>'}`} 
+
+ 
+
+function viewDetail(){const x=Q.find(y=>y.id===st.cur),r=st.res,t=trial(); 
+
+ const gate=!st.user?'<div class="lock">Đăng nhập để kiểm tra đáp án và xem lời giải thích.</div>':(!t.on?'<div class="lock">Đã hết 7 ngày dùng thử. Nâng cấp gói để tiếp tục kiểm tra đáp án.</div>':""); 
+
+ return `<button class="btn" id="back">← Danh sách</button><div class="card" style="margin-top:12px"><span class="meta">${x.s} · Lớp ${x.g}</span><h3 style="font-size:1.2rem">${esc(x.q)}</h3> 
+
+ ${x.o.map((o,i)=>`<label class="opt ${st.pick===i?'sel':''} ${r?(i===x.a?'right':st.pick===i?'wrong':''):''}"><input type="radio" name="o" value="${i}" ${st.pick===i?'checked':''} ${r?'disabled':''}><span><b>${"ABCD"[i]}.</b> ${esc(o)}</span></label>`).join("")} 
+
+ ${gate}<button class="btn main" id="chk" ${st.pick===null||r?'disabled':''}>Kiểm tra đáp án</button> 
+
+ ${r?`<div class="note"><b>${st.pick===x.a?'Chính xác!':'Chưa đúng. Đáp án đúng là '+"ABCD"[x.a]+'.'}</b><br>Lời giải: ${esc(x.t)}</div>`:""}</div>`} 
+
+ 
+
+function viewGen(){const t=trial(),locked=!st.user||!t.on; 
+
+ return `${locked?`<div class="lock">${!st.user?'Đăng nhập để tạo bài giảng và đề bài tập.':'Đã hết 7 ngày dùng thử. Nâng cấp gói để tạo nội dung mới.'}</div>`:""} 
+
+ <div class="card"><div class="grid"> 
+
+ <div><label class="f" for="gs">Môn học</label><select id="gs">${["Toán","Ngữ văn","Tiếng Anh","Vật lý","Hóa học","Sinh học","Lịch sử","Địa lý"].map(s=>`<option>${s}</option>`).join("")}</select></div> 
+
+ <div><label class="f" for="gg">Lớp</label><select id="gg"><option>10</option><option>11</option><option>12</option></select></div> 
+
+ <div><label class="f" for="gk">Loại nội dung</label><select id="gk"><option value="bg">Dàn ý bài giảng</option><option value="de">Đề bài tập</option></select></div> 
+
+ <div><label class="f" for="gn">Số câu (đề bài tập)</label><input id="gn" type="number" min="4" max="40" value="10"></div></div> 
+
+ <label class="f" for="gt">Chủ đề / mục tiêu</label><input id="gt" placeholder="Ví dụ: Bất phương trình bậc nhất một ẩn"> 
+
+ <p><button class="btn main" id="mk" ${locked?'disabled':''}>Tạo nội dung</button></p></div><div id="out2"></div>`} 
+
+ 
+
+function makeText(){const s=$("#gs").value,g=$("#gg").value,t=$("#gt").value.trim()||"(chưa nhập chủ đề)",k=$("#gk").value,n=Math.max(4,+$("#gn").value||10); 
+
+ if(k==="bg")return `DÀN Ý BÀI GIẢNG – ${s} ${g}\nChủ đề: ${t}\n\n1. Mục tiêu bài học\n   - Kiến thức: nêu và hiểu khái niệm chính của "${t}".\n   - Kỹ năng: vận dụng vào bài tập cơ bản và nâng cao.\n2. Kiến thức trọng tâm\n   - Định nghĩa và tính chất.\n   - Công thức / quy tắc cần nhớ.\n   - Lỗi học sinh hay mắc.\n3. Ví dụ minh họa\n   - Ví dụ 1 (nhận biết), Ví dụ 2 (thông hiểu), Ví dụ 3 (vận dụng).\n4. Câu hỏi tương tác trên lớp\n   - 3 câu hỏi nhanh để kiểm tra mức hiểu.\n5. Bài tập củng cố\n   - 5 bài từ dễ đến khó và bài tập về nhà.`; 
+
+ const c=[.4,.3,.2,.1].map(r=>Math.round(n*r));c[0]+=n-c.reduce((a,b)=>a+b,0); 
+
+ return `ĐỀ BÀI TẬP – ${s} ${g}\nChủ đề: ${t}\nTổng số câu: ${n}\n\n`+LV.map((l,i)=>`- ${l}: ${c[i]} câu`).join("\n")+`\n\nCâu 1 → ${n}: mỗi câu có 4 đáp án A, B, C, D, đáp án đúng và lời giải thích.\n(Bản demo chỉ tạo cấu trúc đề. Nội dung câu hỏi sẽ do AI sinh khi nối API.)`} 
+
+ 
+
+function render(){renderNav();const a=$("#app"); 
+
+ const tabs=`<div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="${st.tab==='bai'}" data-tab="bai">Giải bài tập</button><button class="tab" role="tab" aria-selected="${st.tab==='lt'}" data-tab="lt">Luyện tập 15 câu</button><button class="tab" role="tab" aria-selected="${st.tab==='gen'}" data-tab="gen">Tạo bài giảng và đề</button></div>`; 
+
+ a.innerHTML=tabs+(st.tab==="lt"?'<div id="pr"></div>':st.tab==="gen"?viewGen():st.cur?viewDetail():viewList());bind()} 
+
+ 
+
+function bind(){const a=$("#app"); 
+
+ a.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{st.tab=b.dataset.tab;st.cur=null;render()}); 
+
+ if(st.tab==="lt"){prRender();return} 
+
+ if(st.tab==="gen"){const m=$("#mk");if(m)m.onclick=()=>{$("#out2").innerHTML=`<pre>${esc(makeText())}</pre>`};return} 
+
+ if(st.cur){$("#back").onclick=()=>{st.cur=null;render()}; 
+
+  a.querySelectorAll("input[name=o]").forEach(i=>i.onchange=()=>{st.pick=+i.value;render()}); 
+
+  $("#chk").onclick=()=>{const t=trial();if(!st.user)return openAuth("login");if(!t.on)return toast("Đã hết thời gian dùng thử");st.res=true;render()};return} 
+
+ $("#so").value=st.sort;$("#so").onchange=e=>{st.sort=e.target.value;render()}; 
+
+ $("#kw").oninput=e=>{st.kw=e.target.value.toLowerCase();const p=e.target.selectionStart;render();const k=$("#kw");k.focus();k.setSelectionRange(p,p)}; 
+
+ a.querySelectorAll(".tag").forEach(b=>b.onclick=()=>{const t=b.dataset.t;st.sel.has(t)?st.sel.delete(t):st.sel.add(t);render()}); 
+
+ $("#clr").onclick=()=>{st.sel.clear();st.kw="";render()}; 
+
+ a.querySelectorAll("[data-id]").forEach(b=>b.onclick=()=>{st.cur=+b.dataset.id;st.pick=null;st.res=null;render();scrollTo(0,0)})} 
+
+ 
+
+let P={sub:null,i:0,pick:null,done:false,ans:[]}; 
+
+const prReset=s=>{P={sub:s,i:0,pick:null,done:false,ans:[]}}; 
+
+function prRender(){const a=$("#pr"); 
+
+ if(!P.sub){a.innerHTML=`<p class="meta">Mỗi môn 15 câu trắc nghiệm, có đáp án và lời giải thích sau mỗi câu.</p>`+Object.keys(D).map(k=>`<div class="card row"><div><h3 style="margin:0">${k}</h3><span class="meta">${D[k].length} câu · lớp 10, 11, 12</span></div><button class="btn main" data-s="${k}">Bắt đầu</button></div>`).join(""); 
+
+  a.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{const t=trial();if(!st.user)return openAuth("login");if(!t.on)return toast("Đã hết thời gian dùng thử");prReset(b.dataset.s);prRender()});return} 
+
+ const L=D[P.sub]; 
+
+ if(P.i>=L.length){const ok=P.ans.filter((p,i)=>p===L[i][3]).length; 
+
+  a.innerHTML=`<div class="card"><h3 style="margin-top:0">Hoàn thành môn ${P.sub}</h3><p style="font-size:1.4rem;font-weight:800;margin:0">${ok}/${L.length} câu đúng</p><p class="meta">${ok>=12?"Rất tốt, bạn nắm chắc phần này.":ok>=8?"Khá ổn. Xem lại các câu sai bên dưới.":"Hãy đọc kỹ lời giải các câu sai rồi làm lại."}</p>`+L.map((x,i)=>P.ans[i]===x[3]?"":`<div class="rev"><b>Câu ${i+1}.</b> ${x[1]}<br><span class="meta">Bạn chọn: ${x[2][P.ans[i]]} · Đúng: ${x[2][x[3]]}</span><br>${x[4]}</div>`).join("")+`<div class="row" style="margin-top:14px"><button class="btn main" id="again">Làm lại</button><button class="btn" id="pback">Chọn môn khác</button></div></div>`; 
+
+  $("#again").onclick=()=>{prReset(P.sub);prRender()};$("#pback").onclick=()=>{P.sub=null;prRender()};return} 
+
+ const x=L[P.i]; 
+
+ a.innerHTML=`<div class="row"><b>${P.sub} · Lớp ${x[0]}</b><span class="meta">Câu ${P.i+1}/${L.length}</span></div><div class="pg"><i style="width:${P.i/L.length*100}%"></i></div><div class="card"><p style="font-size:1.1rem;font-weight:500;margin-top:0">${x[1]}</p>`+x[2].map((o,i)=>`<button class="opt ${P.pick===i?'sel':''} ${P.done?(i===x[3]?'right':P.pick===i?'wrong':''):''}" data-o="${i}" ${P.done?'disabled':''}><b>${"ABCD"[i]}.</b><span>${o}</span></button>`).join("")+(P.done?`<div class="note"><b>${P.pick===x[3]?"Chính xác!":"Chưa đúng. Đáp án đúng là "+"ABCD"[x[3]]+"."}</b><br>${x[4]}</div>`:"")+`<div class="row"><button class="btn" id="pback">Thoát</button>${P.done?`<button class="btn main" id="next">${P.i+1===L.length?"Xem kết quả":"Câu tiếp"}</button>`:`<button class="btn main" id="chk" ${P.pick===null?'disabled':''}>Kiểm tra đáp án</button>`}</div></div>`; 
+
+ $("#pback").onclick=()=>{P.sub=null;prRender()}; 
+
+ a.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{P.pick=+b.dataset.o;prRender()}); 
+
+ const c=$("#chk");if(c)c.onclick=()=>{if(!st.user)return openAuth("login");if(!trial().on)return toast("Đã hết thời gian dùng thử");P.done=true;P.ans[P.i]=P.pick;prRender()}; 
+
+ const n=$("#next");if(n)n.onclick=()=>{P.i++;P.pick=null;P.done=false;prRender();scrollTo(0,0)}} 
+
+ 
+
+(function init(){const e=store.get("st_session"),u=store.get("st_users");if(e&&u&&u[e])st.user={email:e,role:u[e].role,start:u[e].start};render()})(); 
+
+</script> 
+
+</body> 
+
+</html> 
